@@ -146,7 +146,7 @@ const TodoList = () => {
         </div>
         <h2 className="text-2xl mb-4 text-cyan-50">Todo Lists</h2>
         <input
-          className="my-4 text-zinc-900 mx-6 py-1 rounded-md px-2"
+          className="my-4 text-zinc-900 mx-6 py-1 rounded-md px-2 "
           type="text"
           value={newListName}
           onChange={(e) => setNewListName(e.target.value)}
@@ -159,7 +159,7 @@ const TodoList = () => {
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="flex w-[200vh] flex-wrap">
             {lists.map(list => (
-              <div key={list.id} className="bg-zinc-600 p-4 w-[95vh] rounded-lg m-2">
+              <div key={list.id} className="bg-zinc-600 p-4 w-[95vh] rounded-lg m-2 text-cyan-50">
                 <h3 className="text-xl mb-2">{list.name}</h3>
                 
                 <button onClick={() => deleteList(list.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mb-2">Delete List</button>
