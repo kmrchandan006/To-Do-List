@@ -15,6 +15,8 @@ const TodoList = () => {
   const [tasks, setTasks] = useState([]);
   const [newListName, setNewListName] = useState("");
   const [newTasks, setNewTasks] = useState({});
+  const [editingListId, setEditingListId] = useState(null); // Track the list being edited
+  const [editedListName, setEditedListName] = useState(""); // Track the new list name
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -100,6 +102,21 @@ const TodoList = () => {
     }
   };
 
+
+   // Edit a list's name
+   const enableListEdit = (listId, currentName) => {
+    setEditingListId(listId);
+    setEditedListName(currentName);
+  };
+
+  const updateListName = async (listId) => {
+    if (editedListName.trim()) {
+      await updateDoc(doc(db, "lists", listId), { name: editedListName });
+      setEditingListId(null); // Exit editing mode
+      setEditedListName(""); // Clear the input field
+    }
+  };
+
   const onDragEnd = async (result) => {
     const { destination, source, draggableId } = result;
 
@@ -160,7 +177,51 @@ const TodoList = () => {
           <div className="flex w-[200vh] flex-wrap">
             {lists.map(list => (
               <div key={list.id} className="bg-zinc-600 p-4 w-[95vh] rounded-lg m-2 text-cyan-50">
-                <h3 className="text-xl mb-2">{list.name}</h3>
+                {/* <h3 className="text-xl mb-2">{list.name}</h3> */}
+
+
+
+
+                {editingListId === list.id ? (
+                  <div>
+                    <input
+                      className="my-4 text-zinc-900 py-1 rounded-md px-2"
+                      type="text"
+                      value={editedListName}
+                      onChange={(e) => setEditedListName(e.target.value)}
+                      placeholder="Edit List Name"
+                    />
+                    <button
+                      onClick={() => updateListName(list.id)}
+                      className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingListId(null)}
+                      className="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <h3 className="text-xl mb-2">{list.name}</h3>
+                    <button
+                      onClick={() => enableListEdit(list.id, list.name)}
+                      className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded mb-2"
+                    >
+                      Edit List
+                    </button>
+                  </div>
+                )}
+
+
+
+
+
+
+
                 
                 <button onClick={() => deleteList(list.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mb-2">Delete List</button>
 
