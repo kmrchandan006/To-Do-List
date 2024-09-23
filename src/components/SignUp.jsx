@@ -9,13 +9,15 @@ function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    
 
     const createUser = () => {
         createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
             alert("You are signed up successfully");
+            navigate("/Login");
             setEmail("");  // Reset email
-            setPassword("");  // Reset password
+            setPassword("");  // Reset password 
         })
         .catch(err => alert("Error: " + err.message));
     };
@@ -29,7 +31,7 @@ function SignUp() {
                     <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
                     <input 
                         type='email'
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 ring-cyan-300"
                         onChange={e => setEmail(e.target.value)}  
                         placeholder='Enter your email'
                         value={email}
@@ -51,7 +53,7 @@ function SignUp() {
 
                 <button 
                     onClick={createUser}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full bg-teal-500 hover:bg-teal-950 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                     Sign Up
                 </button>

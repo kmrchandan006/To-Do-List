@@ -70,24 +70,33 @@ const TodoList = () => {
   };
 
   const deleteTask = async (taskId) => {
-    await deleteDoc(doc(db, "tasks", taskId));
+    const confirmDelete = window.confirm("Are you sure you want to delete this task?");
+    if (confirmDelete) {
+      try {
+        await deleteDoc(doc(db, "tasks", taskId));
+        console.log("Task deleted successfully");
+      } catch (error) {
+        console.error("Error deleting task:", error.message);
+      }
+    }
   };
 
   const deleteList = async (listId) => {
-    try {
-      // Delete all tasks associated with the list
-      const q = query(collection(db, "tasks"), where("listId", "==", listId));
-      const querySnapshot = await getDocs(q);
-      const batch = db.batch();
-      querySnapshot.forEach((doc) => {
-        batch.delete(doc.ref);
-      });
-      await batch.commit();
-
-      // Delete the list
-      await deleteDoc(doc(db, "lists", listId));
-    } catch (error) {
-      console.error("Error deleting list:", error.message);
+    const confirmDelete = window.confirm("Are you sure you want to delete this task?");
+    if (confirmDelete) {
+      try {
+        await deleteDoc(doc(db, "lists", listId));
+        const q = query(collection(db, "tasks"), where("listId", "==", listId));
+        const querySnapshot = await getDocs(q);
+        const batch = db.batch();
+        querySnapshot.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+        await batch.commit();
+        await deleteDoc(doc(db, "lists", listId));
+      } catch (error) {
+        console.error("Error deleting lists:", error.message);
+      }
     }
   };
 
@@ -130,14 +139,12 @@ const TodoList = () => {
   };
 
   return (
-    
     <div className="flex w-full justify-center">
-    
       <div className="bg-zinc-800 rounded-lg">
-      <div>
-      <button onClick={logOut} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded  mb-auto  mt-auto">Log Out</button>
-      </div>
-        <h2 className="text-2xl mb-4">Todo Lists</h2>
+        <div>
+          <button onClick={logOut} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mb-auto mt-auto">Log Out</button>
+        </div>
+        <h2 className="text-2xl mb-4 text-cyan-50">Todo Lists</h2>
         <input
           className="my-4 text-zinc-900 mx-6 py-1 rounded-md px-2"
           type="text"
@@ -145,7 +152,9 @@ const TodoList = () => {
           onChange={(e) => setNewListName(e.target.value)}
           placeholder="Enter List Name"
         />
-        <button onClick={addList}>Add List</button>
+        <button onClick={addList} 
+          className=" bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition-colors flex-row mb-auto mt-auto"
+        >Add List</button>
 
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="flex w-[200vh] flex-wrap">
@@ -153,6 +162,8 @@ const TodoList = () => {
               <div key={list.id} className="bg-zinc-600 p-4 w-[95vh] rounded-lg m-2">
                 <h3 className="text-xl mb-2">{list.name}</h3>
                 
+                <button onClick={() => deleteList(list.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mb-2">Delete List</button>
+
                 <input
                   className="my-4 mx-6 text-zinc-900 py-1 rounded-md px-2"
                   type="text"
@@ -225,9 +236,7 @@ const TodoList = () => {
           </div>
         </DragDropContext>
       </div>
-    
     </div>
-    
   );
 };
 
